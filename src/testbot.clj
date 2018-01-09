@@ -1,9 +1,13 @@
 (ns testbot
+  "An example bot made with Disclojure."
   (:require
-    [disclojure :as dc]
+    [disclojure.core :refer :all]
     :reload-all))
 
 (defn -main []
   (-> (slurp ".auth")
-      dc/new
-      dc/run))
+      create-client
+      (on :ready #(-> % :data clojure.pprint/pprint))
+      (on :message-create #(-> % :data clojure.pprint/pprint))
+      (on :message-create #(-> % :data :content println))
+      run))
