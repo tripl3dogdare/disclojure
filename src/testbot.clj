@@ -1,7 +1,9 @@
 (ns testbot
   (:require
-    [disclojure.gateway :as gw]
+    [disclojure :as dc]
     :reload-all))
 
 (defn -main []
-  (gw/connect (slurp ".auth")))
+  (-> (slurp ".auth")
+      dc/new
+      dc/run))
