@@ -1,5 +1,5 @@
 (ns disclojure.gateway
-  "Contains the main gateway implementation for Disclojure."
+  "The main gateway implementation for Disclojure."
   (:require
     [clojure.data.json :as json]
     [http.async.client :as http]
