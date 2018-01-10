@@ -9,4 +9,7 @@
     [org.clojure/core.async "0.3.465"]
     [http.async.client "1.2.0"]]
   :resource-paths ["resources/slf4j-nop-1.7.25.jar"]
-  :main testbot)
+  :profiles {
+    :dev {
+      :source-paths ["example"]
+      :main testbot }})
