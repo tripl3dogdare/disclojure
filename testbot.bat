@@ -1,2 +1,2 @@
 @echo off
-lein with-profile :dev run
+lein with-profile dev run
