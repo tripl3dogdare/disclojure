@@ -35,7 +35,7 @@
       ev (or (event-aliases re) re)
       fl (filter #(= (% :event) ev) (@client :listeners))]
     (doseq [{f :calls} fl]
-      (f (struct Event ev data client)))))
+      (future (f (struct Event ev data client))))))
 
 (def event-aliases
   "A mapping from event name aliases to their root events."
