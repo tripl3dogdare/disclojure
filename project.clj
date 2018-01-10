@@ -1,6 +1,6 @@
-(defproject disclojure "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject com.tripl3dogdare/disclojure "Indev"
+  :description "A Discord API wrapper for Clojure."
+  :url "https://github.com/tripl3dogdare/disclojure"
   :license {:name "MIT"
             :url "https://spdx.org/licenses/MIT.html"}
   :dependencies [
