@@ -39,18 +39,11 @@
 
 ;; HTTP Method Definitions
 
-(defmacro defhttpm [mname datatype]
-  (let [ [c u h d] (map gensym ['c 'u 'h 'd])
-         mfunc (symbol (str "http/" (last (.split (str mname) "/")))) ]
-    `(defn ~mname [~@[c u h d]] (~@[mfunc c u :headers h datatype
-      (if (= datatype :body) `(json/write-str ~d) d)]))))
-
-(defhttpm GET :query)
-(defhttpm PUT :body)
-(defhttpm POST :body)
-(defhttpm HEAD :query)
-(defhttpm PATCH :body)
-(defhttpm DELETE :query)
+(defn- GET [c u h d] (http/GET c u :headers h :query d))
+(defn- PUT [c u h d] (http/PUT c u :headers h :body (json/write-str d)))
+(defn- POST [c u h d] (http/POST c u :headers h :body (json/write-str d)))
+(defn- PATCH [c u h d] (http/PATCH c u :headers h :body (json/write-str d)))
+(defn- DELETE [c u h d] (http/DELETE c u :headers h :query d))
 
 ;; Endpoint Definitions
 
