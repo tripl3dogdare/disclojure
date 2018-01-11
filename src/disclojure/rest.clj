@@ -47,7 +47,7 @@
 
 ;; Endpoint Definitions
 
-(defmacro defendp [name method path & args]
+(defmacro ^:private defendp [name method path & args]
   (let [ [client data] (map gensym ['client 'data])
          mname (-> name .toLowerCase (.replaceAll " " "-") (.replaceAll "'" "") symbol) ]
     `(defn ~mname ~name [~client ~@args ~data]
