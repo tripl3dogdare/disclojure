@@ -1,20 +1,35 @@
 (ns disclojure.rest
-  "REST endpoints and request support for Disclojure."
+  "REST endpoints and request support for Disclojure.
+
+   The majority of the methods in this namespace are direct mappings to Discord endpoints. They take a
+    [[Client]] instance to make the request from, any IDs or other information they need to fill in the endpoint path,
+    and finally a map containing the data to send (either querystring keys/values or JSON-formatted body data, depending;
+    the endpoint methods will convert the map correctly as necessary). All endpoint methods take a data parameter, even
+    if the endpoint doesn't need any data; in that case, just pass in an empty map (this is due to use of a macro
+    to greatly streamline the definition process).
+
+   Endpoints are listed here in alphabetical order. In the source, they are defined top-to-bottom based on the
+    API documentation; starting with the first endpoint on the first page and ending with the last endpoint on the
+    last page. This is to streamline editing and management of the endpoints in relation to the documentation.
+
+   Discord API Documentation: https://discordapp.com/developers/docs/reference
+
+   **Only use this directly if you really need to! Prefer the methods exposed by [[disclojure.core]] whenever possible!**"
   (:require
     [disclojure.info :refer :all]
     [clojure.data.json :as json]
     [http.async.client :as http]))
 
-(def api-url "https://discordapp.com/api/v6")
+(def ^:private api-url "https://discordapp.com/api/v6")
 
-(defn headers
+(defn- headers
   "Gets the headers for the given client."
   [client]
   { :Authorization (format "Bot %s" (.trim (@client :token)))
     :User-Agent (format "DiscordBot (%s, %s)" URL VERSION)
     :Content-Type "application/json" })
 
-(defn request
+(defn- request
   "Sends a request to the given endpoint."
   [dcclient method path data]
   (with-open [ client (http/create-client) ]
@@ -42,7 +57,7 @@
 (defmacro defendp [name method path & args]
   (let [ [client data] (map gensym ['client 'data])
          mname (-> name .toLowerCase (.replaceAll " " "-") (.replaceAll "'" "") symbol) ]
-    `(defn ~mname [~client ~@args ~data]
+    `(defn ~mname ~name [~client ~@args ~data]
       (request ~client ~method (format ~path ~@args) ~data))))
 
 (defendp "Get Guild Audit Logs" GET "/guilds/%s/audit-logs" gid)

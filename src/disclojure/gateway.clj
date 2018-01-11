@@ -1,5 +1,7 @@
 (ns disclojure.gateway
-  "The main gateway implementation for Disclojure."
+  "The main gateway implementation for Disclojure.
+
+   **Only use this directly if you really need to! Prefer the methods exposed by [[disclojure.core]] whenever possible!**"
   (:require
     [clojure.data.json :as json]
     [http.async.client :as http]
@@ -12,8 +14,8 @@
   connect disconnect reconnect
   set-heartbeat)
 
-(def gateway-endp "https://discordapp.com/api/v6/gateway")
-(def gateway-url
+(def ^:private gateway-endp "https://discordapp.com/api/v6/gateway")
+(def ^:private gateway-url
   "Retrieves the URL that should be used to connect to the gateway."
   (str
     (get (with-open [client (http/create-client)]
@@ -21,7 +23,7 @@
         (-> res http/await http/string json/read-str))) "url")
     "?v=6&encoding=json"))
 
-(defn on-receive
+(defn- on-receive
   "Called on receiving a message from the websocket.
    Handles:
      - Event sequence tracking
@@ -57,7 +59,13 @@
       :invalid-session (reconnect session data))))
 
 (defn connect
-  "Creates a new session and connects to the gateway."
+  "Creates a new session and connects to the gateway.
+
+   Parameters:
+
+   - `token` The token to connect with.
+   - `resume?` Whether to attempt to resume or identify from scratch (default: false).
+   - `sdefs` The default settings for the session (default: `{ :dispatch (fn [& _] ()) }`)."
   ([token] (connect token false))
   ([token resume?]
     (connect token resume? { :dispatch (fn [& _] ()) }))
@@ -86,15 +94,24 @@
           (while (@session :connected?) ())))
       session)))
 
-(defn disconnect [session]
-  "Disconnects the given session."
+(defn disconnect
+  "Disconnects the given session.
+
+   Parameters:
+
+   - `session` The session to disconnect."
+  [session]
   (sset session :connected? false)
   (http/close (@session :socket))
   (future-cancel (@session :heartbeat-timer)))
 
 (defn reconnect
   "Attempts to reconnect the given session.
-   Attempts to resume by default, otherwise reidentifies from scratch."
+
+   Parameters:
+
+   - `session` The session to reconnect.
+   - `resume?` Whether to attempt to resume or identify from scratch (default: true)."
   ([session] (reconnect session true))
   ([session resume?]
     (let
@@ -107,7 +124,7 @@
         (connect token true { :sid sid :seq seq })
         (connect token)))))
 
-(defn set-heartbeat
+(defn- set-heartbeat
   "Creates a timer to send heartbeats at the proper intervals.
    Checks for acks and attempts to reconnect if the last ack was not recieved."
   ([session] (set-heartbeat session false))
@@ -120,7 +137,7 @@
         (reconnect session))
       (@session :heartbeat-int) now?)))
 
-(def gate-ops
+(def ^:private gate-ops
   "A map from raw numeric opcodes to their keyword equivalents."
   { 0 :dispatch
     1 :heartbeat
@@ -134,7 +151,7 @@
     9 :invalid-session
     10 :hello
     11 :ack })
-(def get-op
+(def ^:private get-op
   "A map from keyword opcodes to their raw numeric equivalents."
   (map-invert gate-ops))
 
@@ -160,7 +177,7 @@
     :session_id (@session :sid)
     :seq (@session :seq) }))
 
-(defn set-interval
+(defn- set-interval
   "Utility function for running a function at set intervals.
    If now? is true, the function will be run immediately the first time."
   ([callback ms] (set-interval callback ms false))
@@ -169,11 +186,11 @@
       (if (not now?) (Thread/sleep ms))
       (callback)
       (if now? (Thread/sleep ms)))))))
-(defn ws-send
+(defn- ws-send
   "Converts the given message to JSON and sends it over the given socket."
   [socket msg]
   (http/send socket :text (json/write-str msg)))
-(defn sset
+(defn- sset
   "Utility function for updating fields on the given session."
   [session & args]
   (apply (partial swap! session assoc) args))

@@ -5,30 +5,50 @@
 
 (declare dispatch event-aliases)
 
-(defstruct Client :token :listeners)
-(defstruct Event :type :data :client)
-(defstruct Listener :event :calls)
+(defstruct
+  ^{:doc "[Struct] An instance of the client used to connect to Discord."}
+  Client :token :listeners)
+(defstruct
+  ^{:doc "[Struct] An individual event received from the gateway."}
+  Event :type :data :client)
+(defstruct
+  ^{:doc "[Struct] An event listener. (You should never need to create these yourself! Use [[on]] instead.)"}
+  Listener :event :calls)
 
 (defn create-client
-  "Creates a new Disclojure client."
+  "Creates a new [[Client]].
+
+  Parameters:
+
+  - `token` The token to connect with."
   [token]
   (atom (struct Client token [])))
 
 (defn run
-  "Connects the client to Discord.
-   Keep in mind that this function is blocking."
+  "Connects the client to the gateway, logging it in.
+   Keep in mind that this function is blocking.
+
+   Parameters:
+
+   - `client` The client to connect."
   [client]
   (gw/connect (@client :token) false
     { :dispatch (partial dispatch client) }))
 
 (defn on
-  "Registers an event listener for the given client."
+  "Registers an event listener for the given client.
+
+  Parameters:
+
+  - `client` The client to add the listener to.
+  - `event` The event to listen for (see [[event-aliases]]).
+  - `f` The function to call when the event is received."
   [client event f]
   (swap! client assoc
     :listeners (conj (@client :listeners) (struct Listener event f)))
   client)
 
-(defn dispatch [client type data]
+(defn- dispatch [client type data]
   "Dispatches an event to the given client."
   (let
     [ re (keyword (.toLowerCase (.replaceAll (name type) "_" "-")))

@@ -13,7 +13,8 @@
   :codox {
     :namespaces [#"^disclojure\."]
     :metadata {
-      :doc "FIXME: Document this!" }
+      :doc "FIXME: Document this!"
+      :doc/format :markdown }
     :output-path "docs"
     :source-uri "https://github.com/tripl3dogdare/disclojure/blob/master/{filepath}#L{line}" }
   :profiles {
