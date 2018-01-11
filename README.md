@@ -29,14 +29,14 @@ For a full example bot kept reliably up to date with the current state of the li
 (defn -main []
   (-> (slurp "token.txt") ; Retrieve the token from a separate, .gitignore'd file
       dc/create-client ; Create a new client instance using the token
-      
+
       ; Create a new listener for the :message event.
       ; The event map recieved by the listener has the keys :data, :type, and :client.
       ; The threading macro here uses the (:key map) syntax
       ;   to access the :data attribute (the raw event payload)
       ;   and from there the :content attribute (the text of the message).
       (on :message #(-> % :data :content println))
-      
+
       dc/run)) ; Connect the client to Discord and away we go!
 ```
 
@@ -47,10 +47,9 @@ For a full example bot kept reliably up to date with the current state of the li
 - Support for outgoing gateway messages (Status Update, Request Guild Members)
 - Utility methods
 - Command framework
-- Improve documentation
 - Extensive testing
+- Get documentation hosted online
 - Add to Clojars
 - Get channel on Discord API server
-- Support for REST-only clients? 
-  - This is technically possible now with a "fake client" that only contains a `:token` key, but perhaps first-class support for this would be in order.
+- Improve documentation
 - Voice support?
