@@ -1,7 +1,7 @@
 (defproject com.tripl3dogdare/disclojure "Indev"
   :description "A Discord API wrapper for Clojure."
   :url "https://github.com/tripl3dogdare/disclojure"
-  :license {:name "MIT"
+  :license {:name "MIT License"
             :url "https://spdx.org/licenses/MIT.html"}
   :dependencies [
     [org.clojure/clojure "1.8.0"]
