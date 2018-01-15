@@ -1,13 +1,14 @@
 (ns disclojure.core
   "The main namespace for Disclojure."
   (:require
-    [disclojure.gateway :as gw]))
+    [disclojure.gateway :as gw]
+    [disclojure.cache :as cache]))
 
-(declare dispatch event-aliases)
+(declare dispatch event-aliases on)
 
 (defstruct
   ^{:doc "[Struct] An instance of the client used to connect to Discord."}
-  Client :token :listeners)
+  Client :token :listeners :cache)
 (defstruct
   ^{:doc "[Struct] An individual event received from the gateway."}
   Event :type :data :client)
@@ -20,9 +21,39 @@
 
   Parameters:
 
-  - `token` The token to connect with."
-  [token]
-  (atom (struct Client token [])))
+  - `token` The token to connect with.
+  - `cache?` If true, event handlers related to caching are automatically attached (default: `true`)."
+  ([token] (create-client token true))
+  ([token cache?]
+    (let
+      [ client (atom (struct Client token [] (cache/create-cache))) ]
+
+      ;; Apply caching handlers
+      (when cache?
+        (-> client
+            (on :ready (fn [{data :data}]
+              (doto (@client :cache)
+                    (cache/insert :user (-> data :user :id) (data :user))
+                    (#(doseq [ channel (data :private_channels) ]
+                      (cache/insert % :channel (channel :id) channel)))
+                    (#(doseq [ guild (data :guilds) ]
+                      (cache/insert % :guild (guild :id) guild))))))
+
+            ;; Guild Events
+            (on [:guild-create :guild-update] (fn [{data :data}]
+              (doto (@client :cache)
+                    (cache/insert :guild (data :id) data)
+                    (#(doseq [ member (data :members) ]
+                      (cache/insert % :user (-> member :user :id) (member :user))))
+                    (#(doseq [ channel (data :channels) ]
+                      (cache/insert % :channel (channel :id) channel)))
+                    (#(doseq [ role (data :roles) ]
+                      (cache/insert % :role (role :id) role)))
+                    clojure.pprint/pprint)))
+            (on :guild-delete (fn [{data :data}]
+              (cache/uncache (@client :cache) :guild (data :id))))))
+
+      client)))
 
 (defn run
   "Connects the client to the gateway, logging it in.
