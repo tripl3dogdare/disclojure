@@ -52,7 +52,9 @@
 
    Returns: The removed value, or `nil` if the ID did not exist in the cache."
   [cache type id]
-  (swap! cache assoc type (dissoc (@cache type) id)))
+  (let [ v (get (@cache type) id) ]
+    (swap! cache assoc type (dissoc (@cache type) id))
+    v))
 
 (defn through
   "Retrieves an object from the cache by type and ID, inserting `else` if it does not exist.
