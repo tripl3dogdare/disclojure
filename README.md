@@ -35,7 +35,7 @@ For a full example bot kept reliably up to date with the current state of the li
       ; The threading macro here uses the (:key map) syntax
       ;   to access the :data attribute (the raw event payload)
       ;   and from there the :content attribute (the text of the message).
-      (on :message #(-> % :data :content println))
+      (dc/on :message #(-> % :data :content println))
 
       dc/run)) ; Connect the client to Discord and away we go!
 ```
