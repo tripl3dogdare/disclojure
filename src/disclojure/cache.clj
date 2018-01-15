@@ -40,6 +40,20 @@
    [cache type id]
    (get (@cache type) id))
 
+(defn uncache
+  "Removes an object from the cache by type and ID.
+
+   Parameters:
+
+   - `cache` The cache to remove from.
+   - `type` The type of object to remove.
+        - Valid values: `[:channel :message :guild :user :role]`
+   - `id` The ID of the desired object.
+
+   Returns: The removed value, or `nil` if the ID did not exist in the cache."
+  [cache type id]
+  (swap! cache assoc type (dissoc (@cache type) id)))
+
 (defn through
   "Retrieves an object from the cache by type and ID, inserting `else` if it does not exist.
 
