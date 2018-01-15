@@ -5,10 +5,11 @@
   "Creates a new cache."
   []
   (atom
-    { :channels {}
-      :messages {}
-      :guilds {}
-      :users {} }))
+    { :channel {}
+      :message {}
+      :guild {}
+      :user {}
+      :role {} }))
 
 (defn insert
   "Creates or updates an entry in the cache, overwriting any existing entry if it exists.
@@ -32,7 +33,7 @@
 
    - `cache` The cache to retrieve from.
    - `type` The type of object to retrieve.
-        - Valid values: `[:channels :messages :guilds :users]`
+        - Valid values: `[:channel :message :guild :user :role]`
    - `id` The ID of the desired object.
 
    Returns: The retrieved value, or `nil` if the ID does not exist in the cache."
@@ -46,7 +47,7 @@
 
    - `cache` The cache to retrieve from.
    - `type` The type of object to retrieve.
-        - Valid values: `[:channels :messages :guilds :users]`
+        - Valid values: `[:channel :message :guild :user :role]`
    - `id` The ID of the desired object.
    - `else` The value to return if the object doesn't exist in the cache.
       If a function is passed, it will be called and the return value will be used.
