@@ -48,8 +48,7 @@
                     (#(doseq [ channel (data :channels) ]
                       (cache/insert % :channel (channel :id) channel)))
                     (#(doseq [ role (data :roles) ]
-                      (cache/insert % :role (role :id) role)))
-                    clojure.pprint/pprint)))
+                      (cache/insert % :role (role :id) role))))))
             (on :guild-delete (fn [{data :data}]
               (cache/uncache (@client :cache) :guild (data :id))))))
 
