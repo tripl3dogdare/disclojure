@@ -41,11 +41,14 @@
   Parameters:
 
   - `client` The client to add the listener to.
-  - `event` The event to listen for (see [[event-aliases]]).
+  - `event` The event to listen for (see [[event-aliases]]). Can also take a vector of multiple events to listen for.
   - `f` The function to call when the event is received."
   [client event f]
-  (swap! client assoc
-    :listeners (conj (@client :listeners) (struct Listener event f)))
+  (if (vector? event)
+    (swap! client assoc
+      :listeners (apply (partial conj (@client :listeners)) (map #(struct Listener % f) event)))
+    (swap! client assoc
+      :listeners (conj (@client :listeners) (struct Listener event f))))
   client)
 
 (defn- dispatch [client type data]
