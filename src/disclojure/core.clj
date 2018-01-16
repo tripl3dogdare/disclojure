@@ -6,14 +6,33 @@
 
 (declare dispatch event-aliases on)
 
-(defstruct
-  ^{:doc "[Struct] An instance of the client used to connect to Discord."}
+(defstruct ^{:doc
+  "[Struct] An instance of the client used to connect to Discord.
+
+   Keys:
+
+   - `:token` The token used to connect to Discord.
+   - `:listeners` A vector of attached [[Listener]]s.
+   - `:cache` A [[Cache]] instance."}
   Client :token :listeners :cache)
-(defstruct
-  ^{:doc "[Struct] An individual event received from the gateway."}
+
+(defstruct ^{:doc
+  "[Struct] An individual event received from the gateway.
+
+   Keys:
+
+   - `:type` The raw event type.
+   - `:data` The event data received from Discord.
+   - `:client` The client instance that dispatched this event."}
   Event :type :data :client)
-(defstruct
-  ^{:doc "[Struct] An event listener. (You should never need to create these yourself! Use [[on]] instead.)"}
+
+(defstruct ^{:doc
+  "[Struct] An event listener. (You should never need to create these yourself! Use [[on]] instead.)
+
+   Keys:
+
+   - `:event` The event type that should trigger this listener (may be aliased).
+   - `:calls` The function this listener calls when the event is received."}
   Listener :event :calls)
 
 (defn create-client
@@ -120,7 +139,46 @@
       (future (f (struct Event ev data client))))))
 
 (def event-aliases
-  "A mapping from event name aliases to their root events."
+  "A mapping from event name aliases to their root events.
+
+   All events and aliases:
+
+   - `:ready`
+   - `:channel-create`
+   - `:channel-update`
+   - `:channel-delete`
+   - `:channel-pins-update`
+   - `:guild-create`
+   - `:guild-update`
+   - `:guild-delete`
+   - `:guild-ban-add` (`:member-banned`)
+   - `:guild-ban-remove` (`:member-unbanned`)
+   - `:guild-emojis-update` (`:emojis-update`)
+   - `:guild-integrations-update` (`:integrations-update`)
+   - `:guild-member-add` (`:member-add :member-added :member-join :member-joined`)
+   - `:guild-member-remove` (`:member-remove :member-removed :member-leave :member-left`)
+   - `:guild-member-update` (`:member-update`)
+   - `:guild-members-chunk`
+   - `:guild-role-create` (`:role-create :role-created :role-add :role-added`)
+   - `:guild-role-update` (`:role-update`)
+   - `:guild-role-delete` (`:role-delete :role-deleted :role-remove :role-removed`)
+   - `:message-create` (`:message :message-created :message-add :message-added :message-send :message-sent`)
+   - `:message-update`
+   - `:message-delete` (`:message-deleted :message-remove :message-removed`)
+   - `:message-delete-bulk`
+   - `:message-reaction-add` (`:react :reaction-add :reaction-added`)
+   - `:message-reaction-remove` (`:reaction-remove :reaction-removed`)
+   - `:message-reaction-remove-all` (`:reaction-remove-all`)
+   - `:presence-update`
+   - `:typing-start`
+   - `:user-update`
+   - `:voice-state-update`
+   - `:voice-server-update`
+   - `:webhooks-update`
+
+   You can find a full listing of events in the Discord API documentation, including the structure of the [[Event]] object's `:data` key.
+
+   https://discordapp.com/developers/docs/topics/gateway#events"
   { :member-banned :guild-ban-add
     :member-unbanned :guild-ban-remove
 
