@@ -26,31 +26,60 @@
   ([token] (create-client token true))
   ([token cache?]
     (let
-      [ client (atom (struct Client token [] (cache/create-cache))) ]
+      [ client (atom (struct Client token [] (cache/create-cache)))
+        C (@client :cache) ]
 
       ;; Apply caching handlers
       (when cache?
         (-> client
-            (on :ready (fn [{data :data}]
-              (doto (@client :cache)
-                    (cache/insert :user (-> data :user :id) (data :user))
-                    (#(doseq [ channel (data :private_channels) ]
-                      (cache/insert % :channel (channel :id) channel)))
-                    (#(doseq [ guild (data :guilds) ]
-                      (cache/insert % :guild (guild :id) guild))))))
+          (on :ready (fn [{data :data}]
+            (cache/insert C :user (-> data :user :id) (data :user))
+            (doseq [ channel (data :private_channels) ]
+              (cache/insert C :channel (channel :id) channel))
+            (doseq [ guild (data :guilds) ]
+              (cache/insert C :guild (guild :id) guild))))
 
-            ;; Guild Events
-            (on [:guild-create :guild-update] (fn [{data :data}]
-              (doto (@client :cache)
-                    (cache/insert :guild (data :id) data)
-                    (#(doseq [ member (data :members) ]
-                      (cache/insert % :user (-> member :user :id) (member :user))))
-                    (#(doseq [ channel (data :channels) ]
-                      (cache/insert % :channel (channel :id) channel)))
-                    (#(doseq [ role (data :roles) ]
-                      (cache/insert % :role (role :id) role))))))
-            (on :guild-delete (fn [{data :data}]
-              (cache/uncache (@client :cache) :guild (data :id))))))
+          ;; Channel Events
+          (on [:channel-create :channel-update] (fn [{data :data}]
+            (cache/insert C :channel (data :id) data)))
+          (on :channel-delete (fn [{data :data}]
+            (cache/uncache C :channel (data :id))))
+
+          ;; Guild Events
+          (on [:guild-create :guild-update] (fn [{data :data}]
+            (cache/insert C :guild (data :id) data)
+            (doseq [ member (data :members) ]
+              (cache/insert C :user (-> member :user :id) (member :user)))
+            (doseq [ channel (data :channels) ]
+              (cache/insert C :channel (channel :id) channel))
+            (doseq [ role (data :roles) ]
+              (cache/insert C :role (role :id) role))))
+          (on :guild-delete (fn [{data :data}]
+            (cache/uncache C :guild (data :id))))
+
+          ;; Guild Member Events
+          (on [:guild-member-add :guild-member-update] (fn [{data :data}]
+            (cache/insert C :user (-> data :user :id) (data :user))))
+          (on :guild-member-remove (fn [{data :data}]
+            (let
+              [ guilds (vals (@C :guild))
+                guilds (filter #(not= (% :id) (data :guild_id)) guilds)
+                members (mapcat :members guilds) ]
+              (when-not
+                (some #(= (-> % :user :id) (-> data :user :id)) members)
+                (cache/uncache C :user (-> data :user :id))))))
+
+          ;; Role Events
+          (on [:guild-role-create :guild-role-update] (fn [{data :data}]
+            (cache/insert C :role (data :id) data)))
+          (on :guild-role-delete (fn [{data :data}]
+            (cache/uncache C :role (data :id))))
+
+          ;; Message Events
+          (on [:message-create :message-update] (fn [{data :data}]
+            (cache/insert C :message (data :id) data)))
+          (on :message-delete (fn [{data :data}]
+            (cache/uncache C :message (data :id))))))
 
       client)))
 
