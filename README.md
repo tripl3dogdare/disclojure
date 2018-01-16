@@ -2,7 +2,7 @@
 
 A Discord API wrapper for Clojure, aimed at providing a simple, idiomatic, easy-to-use interface for creating Discord bots.
 
-- [Documentation](https://docs.tripl3dogdare.com/disclojure/)
+- [Documentation](http://docs.tripl3dogdare.com/disclojure/)
 
 ## Disclaimer
 
