@@ -1,15 +1,21 @@
 (ns disclojure.cache
   "A simple cache implementation for Disclojure.")
 
+(defstruct ^{:doc
+  "[Struct] A cache instance.
+
+   Keys:
+
+   - `:channel` A map of channel IDs to cached channel objects.
+   - `:message` A map of message IDs to cached message objects.
+   - `:guild` A map of guild IDs to cached guild objects.
+   - `:user` A map of user IDs to cached user objects.
+   - `:role` A map of role IDs to cached role objects."}
+  Cache :channel :message :guild :user :role)
+
 (defn create-cache
   "Creates a new cache."
-  []
-  (atom
-    { :channel {}
-      :message {}
-      :guild {}
-      :user {}
-      :role {} }))
+  [] (atom (struct Cache {} {} {} {} {})))
 
 (defn insert
   "Creates or updates an entry in the cache, overwriting any existing entry if it exists.
