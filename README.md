@@ -2,6 +2,8 @@
 
 A Discord API wrapper for Clojure, aimed at providing a simple, idiomatic, easy-to-use interface for creating Discord bots.
 
+- [Documentation](https://docs.tripl3dogdare.com/disclojure/)
+
 ## Disclaimer
 
 Disclojure is still heavily in development, and said development is currently aimed not at ease of use but at completeness. It comes as a use-at-your-own-risk option for advanced users. For example, at time of writing there is no built-in caching support or ratelimit protection. Eventually, once the library is satisfactorily feature-complete, my attention will turn towards ease of use.
@@ -42,13 +44,12 @@ For a full example bot kept reliably up to date with the current state of the li
 
 ## Todo (in rough order of priority)
 
-- Caching
+- Caching (WIP)
 - Rate limit protection
 - Support for outgoing gateway messages (Status Update, Request Guild Members)
 - Utility methods
 - Command framework
 - Extensive testing
-- Get documentation hosted online
 - Add to Clojars
 - Get channel on Discord API server
 - Improve documentation
