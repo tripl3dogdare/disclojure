@@ -143,27 +143,27 @@
 
    All events and aliases:
 
-   - `:ready`
-   - `:channel-create`
-   - `:channel-update`
-   - `:channel-delete`
-   - `:channel-pins-update`
-   - `:guild-create`
-   - `:guild-update`
-   - `:guild-delete`
-   - `:guild-ban-add` (`:member-banned`)
-   - `:guild-ban-remove` (`:member-unbanned`)
-   - `:guild-emojis-update` (`:emojis-update`)
-   - `:guild-integrations-update` (`:integrations-update`)
-   - `:guild-member-add` (`:member-add :member-added :member-join :member-joined`)
-   - `:guild-member-remove` (`:member-remove :member-removed :member-leave :member-left`)
-   - `:guild-member-update` (`:member-update`)
+   - `:ready` (`:connect :connected`)
+   - `:channel-create` (`:channel-created :channel-add :channel-added`)
+   - `:channel-update` (`:channel-updated`)
+   - `:channel-delete` (`:channel-deleted :channel-remove :channel-removed`)
+   - `:channel-pins-update` (`:channel-pins-updated`)
+   - `:guild-create` (`:guild-created :guild-add :guild-added`)
+   - `:guild-update` (`:guild-updated`)
+   - `:guild-delete` (`:guild-deleted :guild-remove :guild-remove`)
+   - `:guild-ban-add` (`:guild-ban-added :member-ban :member-banned`)
+   - `:guild-ban-remove` (`:guild-ban-removed :member-unban :member-unbanned`)
+   - `:guild-emojis-update` (`:guild-emojis-updated :emojis-update :emojis-updated`)
+   - `:guild-integrations-update` (`:guild-integrations-updated :integrations-update :integrations-updated`)
+   - `:guild-member-add` (`:guild-member-added :member-add :member-added :member-join :member-joined`)
+   - `:guild-member-remove` (`:guild-member-removed :member-remove :member-removed :member-leave :member-left`)
+   - `:guild-member-update` (`guild-member-updated :member-update :member-updated`)
    - `:guild-members-chunk`
-   - `:guild-role-create` (`:role-create :role-created :role-add :role-added`)
-   - `:guild-role-update` (`:role-update`)
-   - `:guild-role-delete` (`:role-delete :role-deleted :role-remove :role-removed`)
+   - `:guild-role-create` (`:guild-role-created :role-create :role-created :role-add :role-added`)
+   - `:guild-role-update` (`:guild-role-updated :role-update :role-updated`)
+   - `:guild-role-delete` (`:guild-role-deleted :role-delete :role-deleted :role-remove :role-removed`)
    - `:message-create` (`:message :message-created :message-add :message-added :message-send :message-sent`)
-   - `:message-update`
+   - `:message-update` (`:message-updated`)
    - `:message-delete` (`:message-deleted :message-remove :message-removed`)
    - `:message-delete-bulk`
    - `:message-reaction-add` (`:react :reaction-add :reaction-added`)
@@ -179,35 +179,78 @@
    You can find a full listing of events in the Discord API documentation, including the structure of the [[Event]] object's `:data` key.
 
    https://discordapp.com/developers/docs/topics/gateway#events"
-  { :member-banned :guild-ban-add
+  { :connect :ready
+    :connected :ready
+
+    :channel-created :channel-create
+    :channel-add :channel-create
+    :channel-added :channel-create
+
+    :channel-updated :channel-update
+
+    :channel-deleted :channel-delete
+    :channel-remove :channel-delete
+    :channel-removed :channel-delete
+
+    :channel-pins-updated :channel-pins-update
+
+    :guild-created :guild-create
+    :guild-add :guild-create
+    :guild-added :guild-create
+
+    :guild-updated :guild-update
+
+    :guild-deleted :guild-delete
+    :guild-remove :guild-delete
+    :guild-removed :guild-delete
+
+    :guild-ban-added :guild-ban-add
+    :member-ban :guild-ban-add
+    :member-banned :guild-ban-add
+
+    :guild-ban-removed :guild-ban-remove
+    :member-unban :guild-ban-remove
     :member-unbanned :guild-ban-remove
 
+    :guild-emojis-updated :guild-emojis-update
     :emojis-update :guild-emojis-update
-    :integrations-update :guild-integrations-update
+    :emojis-updated :guild-emojis-update
 
+    :guild-integrations-updated :guild-integrations-update
+    :integrations-update :guild-integrations-update
+    :integrations-updated :guild-integrations-update
+
+    :guild-member-added :guild-member-add
     :member-add :guild-member-add
     :member-added :guild-member-add
     :member-join :guild-member-add
     :member-joined :guild-member-add
 
+    :guild-member-removed :guild-member-remove
     :member-remove :guild-member-remove
     :member-removed :guild-member-remove
     :member-leave :guild-member-remove
     :member-left :guild-member-remove
 
+    :guild-member-updated :guild-member-removed
     :member-update :guild-member-update
+    :member-updated :guild-member-update
 
+    :guild-role-created :guild-role-create
     :role-create :guild-role-create
     :role-created :guild-role-create
     :role-add :guild-role-create
     :role-added :guild-role-create
 
+    :guild-role-updated :guild-role-update
+    :role-update :guild-role-update
+    :role-updated :guild-role-update
+
+    :guild-role-deleted :guild-role-delete
     :role-delete :guild-role-delete
     :role-deleted :guild-role-delete
     :role-remove :guild-role-delete
     :role-removed :guild-role-delete
-
-    :role-update :guild-role-update
 
     :message :message-create
     :message-created :message-create
@@ -215,6 +258,8 @@
     :message-added :message-create
     :message-send :message-create
     :message-sent :message-create
+
+    :message-updated :message-update
 
     :message-deleted :message-delete
     :message-remove :message-delete

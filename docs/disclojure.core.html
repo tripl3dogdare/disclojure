@@ -20,27 +20,27 @@
 </ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L19">view source</a></div></div><div class="public anchor" id="var-event-aliases"><h3>event-aliases</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>A mapping from event name aliases to their root events.</p>
 <p>All events and aliases:</p>
 <ul>
-  <li><code>:ready</code></li>
-  <li><code>:channel-create</code></li>
-  <li><code>:channel-update</code></li>
-  <li><code>:channel-delete</code></li>
-  <li><code>:channel-pins-update</code></li>
-  <li><code>:guild-create</code></li>
-  <li><code>:guild-update</code></li>
-  <li><code>:guild-delete</code></li>
-  <li><code>:guild-ban-add</code> (<code>:member-banned</code>)</li>
-  <li><code>:guild-ban-remove</code> (<code>:member-unbanned</code>)</li>
-  <li><code>:guild-emojis-update</code> (<code>:emojis-update</code>)</li>
-  <li><code>:guild-integrations-update</code> (<code>:integrations-update</code>)</li>
-  <li><code>:guild-member-add</code> (<code>:member-add :member-added :member-join :member-joined</code>)</li>
-  <li><code>:guild-member-remove</code> (<code>:member-remove :member-removed :member-leave :member-left</code>)</li>
-  <li><code>:guild-member-update</code> (<code>:member-update</code>)</li>
+  <li><code>:ready</code> (<code>:connect :connected</code>)</li>
+  <li><code>:channel-create</code> (<code>:channel-created :channel-add :channel-added</code>)</li>
+  <li><code>:channel-update</code> (<code>:channel-updated</code>)</li>
+  <li><code>:channel-delete</code> (<code>:channel-deleted :channel-remove :channel-removed</code>)</li>
+  <li><code>:channel-pins-update</code> (<code>:channel-pins-updated</code>)</li>
+  <li><code>:guild-create</code> (<code>:guild-created :guild-add :guild-added</code>)</li>
+  <li><code>:guild-update</code> (<code>:guild-updated</code>)</li>
+  <li><code>:guild-delete</code> (<code>:guild-deleted :guild-remove :guild-remove</code>)</li>
+  <li><code>:guild-ban-add</code> (<code>:guild-ban-added :member-ban :member-banned</code>)</li>
+  <li><code>:guild-ban-remove</code> (<code>:guild-ban-removed :member-unban :member-unbanned</code>)</li>
+  <li><code>:guild-emojis-update</code> (<code>:guild-emojis-updated :emojis-update :emojis-updated</code>)</li>
+  <li><code>:guild-integrations-update</code> (<code>:guild-integrations-updated :integrations-update :integrations-updated</code>)</li>
+  <li><code>:guild-member-add</code> (<code>:guild-member-added :member-add :member-added :member-join :member-joined</code>)</li>
+  <li><code>:guild-member-remove</code> (<code>:guild-member-removed :member-remove :member-removed :member-leave :member-left</code>)</li>
+  <li><code>:guild-member-update</code> (<code>guild-member-updated :member-update :member-updated</code>)</li>
   <li><code>:guild-members-chunk</code></li>
-  <li><code>:guild-role-create</code> (<code>:role-create :role-created :role-add :role-added</code>)</li>
-  <li><code>:guild-role-update</code> (<code>:role-update</code>)</li>
-  <li><code>:guild-role-delete</code> (<code>:role-delete :role-deleted :role-remove :role-removed</code>)</li>
+  <li><code>:guild-role-create</code> (<code>:guild-role-created :role-create :role-created :role-add :role-added</code>)</li>
+  <li><code>:guild-role-update</code> (<code>:guild-role-updated :role-update :role-updated</code>)</li>
+  <li><code>:guild-role-delete</code> (<code>:guild-role-deleted :role-delete :role-deleted :role-remove :role-removed</code>)</li>
   <li><code>:message-create</code> (<code>:message :message-created :message-add :message-added :message-send :message-sent</code>)</li>
-  <li><code>:message-update</code></li>
+  <li><code>:message-update</code> (<code>:message-updated</code>)</li>
   <li><code>:message-delete</code> (<code>:message-deleted :message-remove :message-removed</code>)</li>
   <li><code>:message-delete-bulk</code></li>
   <li><code>:message-reaction-add</code> (<code>:react :reaction-add :reaction-added</code>)</li>
