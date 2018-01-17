@@ -98,7 +98,11 @@
           (on [:message-create :message-update] (fn [{data :data}]
             (cache/insert C :message (data :id) data)))
           (on :message-delete (fn [{data :data}]
-            (cache/uncache C :message (data :id))))))
+            (cache/uncache C :message (data :id))))
+
+          ;; User Events
+          (on [:user-update] (fn [{data :data}]
+            (cache/insert C :user (data :id) data)))))
 
       client)))
 
