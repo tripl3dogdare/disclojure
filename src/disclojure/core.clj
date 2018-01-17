@@ -101,7 +101,7 @@
             (cache/uncache C :message (data :id))))
 
           ;; User Events
-          (on [:user-update] (fn [{data :data}]
+          (on :user-update (fn [{data :data}]
             (cache/insert C :user (data :id) data)))))
 
       client)))
@@ -136,9 +136,12 @@
 (defn- dispatch [client type data]
   "Dispatches an event to the given client."
   (let
-    [ re (keyword (.toLowerCase (.replaceAll (name type) "_" "-")))
-      ev (or (event-aliases re) re)
-      fl (filter #(or (= (%1 :event) ev) (= (%1 :event) :any)) (@client :listeners))
+    [ ev (keyword (.toLowerCase (.replaceAll (name type) "_" "-")))
+      fl (filter
+            #(or
+              (= (%1 :event) :any)
+              (= (or (-> %1 :event event-aliases) (%1 :event)) ev))
+            (@client :listeners)) ]
     (doseq [{f :calls} fl]
       (future (f (struct Event ev data client))))))
 
