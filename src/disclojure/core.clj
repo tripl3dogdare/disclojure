@@ -138,7 +138,7 @@
   (let
     [ re (keyword (.toLowerCase (.replaceAll (name type) "_" "-")))
       ev (or (event-aliases re) re)
-      fl (filter #(= (% :event) ev) (@client :listeners))]
+      fl (filter #(or (= (%1 :event) ev) (= (%1 :event) :any)) (@client :listeners))
     (doseq [{f :calls} fl]
       (future (f (struct Event ev data client))))))
 
@@ -147,6 +147,7 @@
 
    All events and aliases:
 
+   - `:any` (Note: this fires for all events. Use cases are rare but possible.)
    - `:ready` (`:connect :connected`)
    - `:channel-create` (`:channel-created :channel-add :channel-added`)
    - `:channel-update` (`:channel-updated`)
