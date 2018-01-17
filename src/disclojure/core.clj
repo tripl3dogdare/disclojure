@@ -23,8 +23,10 @@
 
    - `:type` The raw event type.
    - `:data` The event data received from Discord.
-   - `:client` The client instance that dispatched this event."}
-  Event :type :data :client)
+   - `:client` The client instance that dispatched this event.
+   - `:prev` The state of the object represented by `:data` before the event was received.
+    Only sent with `update` events (`:channel-update`, `:message-update`, etc."}
+  Event :type :data :client :prev)
 
 (defstruct ^{:doc
   "[Struct] An event listener. (You should never need to create these yourself! Use [[on]] instead.)
@@ -141,9 +143,22 @@
             #(or
               (= (%1 :event) :any)
               (= (or (-> %1 :event event-aliases) (%1 :event)) ev))
-            (@client :listeners)) ]
+            (@client :listeners))
+      ct (case ev
+            :channel-update :channel
+            :guild-update :guild
+            :guild-member-update :user
+            :guild-role-update :role
+            :message-update :message
+            :user-update :user
+            nil)
+      id (case ct
+            :guild-member-update (-> data :user :id)
+            (data :id))
+      pv (if ct
+            (cache/retrieve (@client :cache) ct id)) ]
     (doseq [{f :calls} fl]
-      (future (f (struct Event ev data client))))))
+      (future (f (struct Event ev data client pv))))))
 
 (def event-aliases
   "A mapping from event name aliases to their root events.
