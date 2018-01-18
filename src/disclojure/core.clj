@@ -25,7 +25,7 @@
    - `:data` The event data received from Discord.
    - `:client` The client instance that dispatched this event.
    - `:prev` The state of the object represented by `:data` before the event was received.
-    Only sent with `update` events (`:channel-update`, `:message-update`, etc."}
+    Only sent with `update` events (`:channel-update`, `:message-update`, etc.)"}
   Event :type :data :client :prev)
 
 (defstruct ^{:doc

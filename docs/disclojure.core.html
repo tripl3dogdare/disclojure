@@ -11,15 +11,17 @@
 <ul>
   <li><code>token</code> The token to connect with.</li>
   <li><code>cache?</code> If true, event handlers related to caching are automatically attached (default: <code>true</code>).</li>
-</ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L38">view source</a></div></div><div class="public anchor" id="var-Event"><h3>Event</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>[Struct] An individual event received from the gateway.</p>
+</ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L40">view source</a></div></div><div class="public anchor" id="var-Event"><h3>Event</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>[Struct] An individual event received from the gateway.</p>
 <p>Keys:</p>
 <ul>
   <li><code>:type</code> The raw event type.</li>
   <li><code>:data</code> The event data received from Discord.</li>
   <li><code>:client</code> The client instance that dispatched this event.</li>
+  <li><code>:prev</code> The state of the object represented by <code>:data</code> before the event was received.  Only sent with <code>update</code> events (<code>:channel-update</code>, <code>:message-update</code>, etc.)</li>
 </ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L19">view source</a></div></div><div class="public anchor" id="var-event-aliases"><h3>event-aliases</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>A mapping from event name aliases to their root events.</p>
 <p>All events and aliases:</p>
 <ul>
+  <li><code>:any</code> (Note: this fires for all events. Use cases are rare but possible.)</li>
   <li><code>:ready</code> (<code>:connect :connected</code>)</li>
   <li><code>:channel-create</code> (<code>:channel-created :channel-add :channel-added</code>)</li>
   <li><code>:channel-update</code> (<code>:channel-updated</code>)</li>
@@ -54,19 +56,19 @@
   <li><code>:webhooks-update</code></li>
 </ul>
 <p>You can find a full listing of events in the Discord API documentation, including the structure of the <a href="disclojure.core.html#var-Event">Event</a> object’s <code>:data</code> key.</p>
-<p><a href="https://discordapp.com/developers/docs/topics/gateway#events">https://discordapp.com/developers/docs/topics/gateway#events</a></p></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L141">view source</a></div></div><div class="public anchor" id="var-Listener"><h3>Listener</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>[Struct] An event listener. (You should never need to create these yourself! Use <a href="disclojure.core.html#var-on">on</a> instead.)</p>
+<p><a href="https://discordapp.com/developers/docs/topics/gateway#events">https://discordapp.com/developers/docs/topics/gateway#events</a></p></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L163">view source</a></div></div><div class="public anchor" id="var-Listener"><h3>Listener</h3><div class="usage"></div><div class="doc"><div class="markdown"><p>[Struct] An event listener. (You should never need to create these yourself! Use <a href="disclojure.core.html#var-on">on</a> instead.)</p>
 <p>Keys:</p>
 <ul>
   <li><code>:event</code> The event type that should trigger this listener (may be aliased).</li>
   <li><code>:calls</code> The function this listener calls when the event is received.</li>
-</ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L29">view source</a></div></div><div class="public anchor" id="var-on"><h3>on</h3><div class="usage"><code>(on client event f)</code></div><div class="doc"><div class="markdown"><p>Registers an event listener for the given client.</p>
+</ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L31">view source</a></div></div><div class="public anchor" id="var-on"><h3>on</h3><div class="usage"><code>(on client event f)</code></div><div class="doc"><div class="markdown"><p>Registers an event listener for the given client.</p>
 <p>Parameters:</p>
 <ul>
   <li><code>client</code> The client to add the listener to.</li>
   <li><code>event</code> The event to listen for (see <a href="disclojure.core.html#var-event-aliases">event-aliases</a>). Can also take a vector of multiple events to listen for.</li>
   <li><code>f</code> The function to call when the event is received.</li>
-</ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L116">view source</a></div></div><div class="public anchor" id="var-run"><h3>run</h3><div class="usage"><code>(run client)</code></div><div class="doc"><div class="markdown"><p>Connects the client to the gateway, logging it in. Keep in mind that this function is blocking.</p>
+</ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L122">view source</a></div></div><div class="public anchor" id="var-run"><h3>run</h3><div class="usage"><code>(run client)</code></div><div class="doc"><div class="markdown"><p>Connects the client to the gateway, logging it in. Keep in mind that this function is blocking.</p>
 <p>Parameters:</p>
 <ul>
   <li><code>client</code> The client to connect.</li>
-</ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L105">view source</a></div></div></div></body></html>
+</ul></div></div><div class="src-link"><a href="https://github.com/tripl3dogdare/disclojure/blob/master/src/disclojure/core.clj#L111">view source</a></div></div></div></body></html>
