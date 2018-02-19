@@ -12,3 +12,5 @@ pom.xml.asc
 .auth
 y.bat
 *.ftp
+
+*.code-workspace

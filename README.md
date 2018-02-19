@@ -16,7 +16,7 @@ To install, add the following dependency to your project or build file:
 [com.tripl3dogdare/disclojure "Indev"]
 ```
 
-(Note: This is only here for example purposes. Disclojure is not available as a managed dependency yet. If you'd like to use it, you can download the source and build it yourself.)
+**WARNING: Disclojure is currently in heavy development and changes are not being versioned. It should be considered very unstable as a dependency. Once it is complete enough to be used reliably, proper versioning will be used.**
 
 ## Examples
 
