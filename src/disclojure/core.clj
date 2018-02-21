@@ -135,27 +135,44 @@
       :listeners (conj (@client :listeners) (struct Listener event f))))
   client)
 
-(defn- dispatch [client type data]
+(defn api-event-type->dclj
+  "Convert the event type from the API to its idiomatic name in Disclojure.
+
+   Parameters:
+  
+   - `type` The event type from the API, as a keyword."
+  [type]
+  (keyword (.toLowerCase (.replaceAll (name type) "_" "-"))))
+
+(defn- get-cached-event-data
+  "Get the previous, cached data for the object in the event."
+  [client event-name]
+  (when-let
+    [ cache-type (case event-name
+                   :channel-update      :channel
+                   :guild-update        :guild
+                   :guild-member-update :user
+                   :guild-role-update   :role
+                   :message-update      :message
+                   :user-update         :user
+                   nil) ]
+    (cache/retrieve (:cache @client)
+                    cache-type
+                    (case event-name
+                      :guild-member-update (-> data :user :id)
+                      (:id data)))))
+
+(defn- dispatch
   "Dispatches an event to the given client."
+  [client type data]
   (let
-    [ event-name (keyword (.toLowerCase (.replaceAll (name type) "_" "-")))
+    [ event-name (api-event-type->dclj type)
       listeners (seq (filter
                       #(or
                         (= (% :event) :any)
                         (= (or (-> % :event event-aliases) (% :event)) event-name))
                       (@client :listeners)))
-      cache-type (if listeners (case event-name
-                                 :channel-update      :channel
-                                 :guild-update        :guild
-                                 :guild-member-update :user
-                                 :guild-role-update   :role
-                                 :message-update      :message
-                                 :user-update         :user
-                                 nil))
-      id (if cache-type (case event-name
-                          :guild-member-update (-> data :user :id)
-                          (data :id)))
-      prev-data (if cache-type (cache/retrieve (@client :cache) cache-type id))
+      prev-data (if listeners (get-cached-event-data client event-name))
       event-struct (if listeners (struct Event event-name data client prev-data)) ]
     (if listeners (doseq [{f :calls} listeners] (future (f event-struct))))))
 
