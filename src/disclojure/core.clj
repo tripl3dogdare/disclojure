@@ -1,8 +1,8 @@
 (ns disclojure.core
   "The main namespace for Disclojure."
-  (:require [clojure.string :as str]
-            [disclojure.gateway :as gw]
-            [disclojure.cache :as cache]))
+  (:require
+    [disclojure.gateway :as gw]
+    [disclojure.cache :as cache]))
 
 (declare dispatch event-aliases on)
 
@@ -137,27 +137,29 @@
 
 (defn- dispatch [client type data]
   "Dispatches an event to the given client."
-  (let [event-name (keyword (str/lower-case (str/replace (name type) "_" "-")))
-        listeners (filter
-                   #(or
-                     (= (% :event) :any)
-                     (= (or (-> % :event event-aliases) (% :event)) event-name))
-                   (@client :listeners))]
+  (let
+    [ event-name (keyword (.toLowerCase (.replaceAll (name type) "_" "-")))
+      listeners (filter
+                  #(or
+                    (= (% :event) :any)
+                    (= (or (-> % :event event-aliases) (% :event)) event-name))
+                  (@client :listeners)) ]
     (when (pos? (count listeners))
-      (let [cache-type (case event-name
-                         :channel-update      :channel
-                         :guild-update        :guild
-                         :guild-member-update :user
-                         :guild-role-update   :role
-                         :message-update      :message
-                         :user-update         :user
-                         nil)
-           id (case cache-type
-                :guild-member-update (-> data :user :id)
-                (data :id))
-           prev-data (if cache-type
-                       (cache/retrieve (@client :cache) cache-type id))
-           event-struct (struct Event event-name data client prev-data)]
+      (let
+        [ cache-type (case event-name
+                        :channel-update      :channel
+                        :guild-update        :guild
+                        :guild-member-update :user
+                        :guild-role-update   :role
+                        :message-update      :message
+                        :user-update         :user
+                        nil)
+          id (case cache-type
+              :guild-member-update (-> data :user :id)
+              (data :id))
+          prev-data (if cache-type
+                      (cache/retrieve (@client :cache) cache-type id))
+          event-struct (struct Event event-name data client prev-data)]
         (doseq [{f :calls} listeners] (future (f event-struct)))))))
 
 (def event-aliases
