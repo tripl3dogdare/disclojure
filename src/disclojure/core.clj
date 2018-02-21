@@ -139,28 +139,25 @@
   "Dispatches an event to the given client."
   (let
     [ event-name (keyword (.toLowerCase (.replaceAll (name type) "_" "-")))
-      listeners (filter
-                  #(or
-                    (= (% :event) :any)
-                    (= (or (-> % :event event-aliases) (% :event)) event-name))
-                  (@client :listeners)) ]
-    (when (pos? (count listeners))
-      (let
-        [ cache-type (case event-name
-                       :channel-update      :channel
-                       :guild-update        :guild
-                       :guild-member-update :user
-                       :guild-role-update   :role
-                       :message-update      :message
-                       :user-update         :user
-                       nil)
-          id (case cache-type
-               :guild-member-update (-> data :user :id)
-               (data :id))
-          prev-data (if cache-type
-                      (cache/retrieve (@client :cache) cache-type id))
-          event-struct (struct Event event-name data client prev-data)]
-        (doseq [{f :calls} listeners] (future (f event-struct)))))))
+      listeners (seq (filter
+                      #(or
+                        (= (% :event) :any)
+                        (= (or (-> % :event event-aliases) (% :event)) event-name))
+                      (@client :listeners)))
+      cache-type (if listeners (case event-name
+                                 :channel-update      :channel
+                                 :guild-update        :guild
+                                 :guild-member-update :user
+                                 :guild-role-update   :role
+                                 :message-update      :message
+                                 :user-update         :user
+                                 nil))
+      id (if cache-type (case event-name
+                          :guild-member-update (-> data :user :id)
+                          (data :id)))
+      prev-data (if cache-type (cache/retrieve (@client :cache) cache-type id))
+      event-struct (if listeners (struct Event event-name data client prev-data)) ]
+    (if listeners (doseq [{f :calls} listeners] (future (f event-struct))))))
 
 (def event-aliases
   "A mapping from event name aliases to their root events.
