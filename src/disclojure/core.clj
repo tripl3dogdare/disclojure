@@ -147,16 +147,16 @@
     (when (pos? (count listeners))
       (let
         [ cache-type (case event-name
-                        :channel-update      :channel
-                        :guild-update        :guild
-                        :guild-member-update :user
-                        :guild-role-update   :role
-                        :message-update      :message
-                        :user-update         :user
-                        nil)
+                       :channel-update      :channel
+                       :guild-update        :guild
+                       :guild-member-update :user
+                       :guild-role-update   :role
+                       :message-update      :message
+                       :user-update         :user
+                       nil)
           id (case cache-type
-              :guild-member-update (-> data :user :id)
-              (data :id))
+               :guild-member-update (-> data :user :id)
+               (data :id))
           prev-data (if cache-type
                       (cache/retrieve (@client :cache) cache-type id))
           event-struct (struct Event event-name data client prev-data)]
