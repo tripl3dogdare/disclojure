@@ -146,7 +146,7 @@
 
 (defn- get-cached-event-data
   "Get the previous, cached data for the object in the event."
-  [client event-name]
+  [client event-name event-data]
   (when-let
     [ cache-type (case event-name
                    :channel-update      :channel
@@ -159,8 +159,8 @@
     (cache/retrieve (:cache @client)
                     cache-type
                     (case event-name
-                      :guild-member-update (-> data :user :id)
-                      (:id data)))))
+                      :guild-member-update (-> event-data :user :id)
+                      (:id event-data)))))
 
 (defn- dispatch
   "Dispatches an event to the given client."
@@ -172,7 +172,7 @@
                         (= (% :event) :any)
                         (= (or (-> % :event event-aliases) (% :event)) event-name))
                       (@client :listeners)))
-      prev-data (if listeners (get-cached-event-data client event-name))
+      prev-data (if listeners (get-cached-event-data client event-name data))
       event-struct (if listeners (struct Event event-name data client prev-data)) ]
     (if listeners (doseq [{f :calls} listeners] (future (f event-struct))))))
 
